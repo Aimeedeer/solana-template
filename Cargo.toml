@@ -1,4 +1,6 @@
 [workspace]
 members = [
-  "src/*",
+  "src/client",
+  "src/common",
+  "src/program",
 ]

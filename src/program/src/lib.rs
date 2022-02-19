@@ -1,20 +1,22 @@
+use borsh::de::BorshDeserialize;
+use common::TransferInstruction;
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
     msg,
+    program::invoke,
     pubkey::Pubkey,
+    system_instruction, system_program,
 };
 
 #[cfg(not(feature = "no-entrypoint"))]
 mod entrypoint {
-    use super::process_instruction;
+    use super::exec_transfer_instruction;
     use solana_program::entrypoint;
-    entrypoint!(process_instruction);
+    entrypoint!(exec_transfer_instruction);
 }
 
-mod processor;
-
-fn process_instruction(
+fn exec_transfer_instruction(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
@@ -23,13 +25,27 @@ fn process_instruction(
 
     let account_info_iter = &mut accounts.iter();
 
-    let program_id = next_account_info(account_info_iter)?;
-    let system_program = next_account_info(account_info_iter)?;
+    let payer = next_account_info(account_info_iter)?;
+    let recipient = next_account_info(account_info_iter)?;
+    let system_account = next_account_info(account_info_iter)?;
 
-    msg!("program_id: {:?}", program_id.key);
-    msg!("system_program: {:?}", system_program.key);
+    {
+        msg!("payer: {:?}", payer.key);
+        msg!("recipient: {:?}", recipient.key);
 
-    processor::exec(program_id.key, accounts, instruction_data)?;
+        assert!(payer.is_writable);
+        assert!(payer.is_signer);
+        assert!(recipient.is_writable);
 
-    Ok(())
+        assert_eq!(&system_program::ID, system_account.key);
+        assert!(system_account.executable);
+    }
+
+    let mut instruction_data = instruction_data;
+    let transfer_instr = TransferInstruction::deserialize(&mut instruction_data)?;
+
+    invoke(
+        &system_instruction::transfer(payer.key, recipient.key, transfer_instr.amount),
+        &[payer.clone(), recipient.clone(), system_account.clone()],
+    )
 }

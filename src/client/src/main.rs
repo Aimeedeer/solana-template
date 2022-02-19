@@ -1,5 +1,6 @@
 use anyhow::{anyhow, bail, Context, Result};
 use clap::{ArgEnum, Parser};
+use common::TransferInstruction;
 use log::info;
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::{
@@ -19,10 +20,12 @@ fn main() -> Result<()> {
 
     let args = Cli::parse();
 
+    let new_keypair = Keypair::new();
+    println!("new_keypair_pubkey: {:?}", new_keypair.pubkey());
+
     match args.cmd {
         Command::CreateAccount => {
-            let new_keypair = Keypair::new();
-
+            // example: use Solana sdk to call system_instruction directly
             let instr = system_instruction::create_account(
                 &config.keypair.pubkey(),
                 &new_keypair.pubkey(),
@@ -42,7 +45,27 @@ fn main() -> Result<()> {
             let sig = client.send_and_confirm_transaction_with_spinner(&tx)?;
             println!("sig: {}", sig);
         }
-    }
+        Command::Transfer => {
+            // example: use our onchain program
+            let instr = TransferInstruction::build_instruction(
+                &config.keypair.pubkey(),
+                &new_keypair.pubkey(),
+                2_000_000,
+                &program_keypair.pubkey(),
+            )?;
+
+            let blockhash = client.get_latest_blockhash()?;
+            let tx = Transaction::new_signed_with_payer(
+                &[instr],
+                Some(&config.keypair.pubkey()),
+                &[&config.keypair],
+                blockhash,
+            );
+
+            let sig = client.send_and_confirm_transaction_with_spinner(&tx)?;
+            println!("sig: {}", sig);
+        }
+    };
 
     Ok(())
 }
@@ -56,6 +79,7 @@ struct Cli {
 #[derive(ArgEnum, Debug, Clone)]
 enum Command {
     CreateAccount,
+    Transfer,
 }
 
 static DEPLOY_PATH: &str = "target/deploy";

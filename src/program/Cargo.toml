@@ -11,3 +11,6 @@ no-entrypoint = []
 
 [dependencies]
 solana-program = "1.9.7"
+common = { path = "../common" }
+borsh = "0.9.0"
+borsh-derive = "0.9.0"

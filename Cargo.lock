@@ -401,12 +401,23 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap 3.0.14",
+ "common",
  "env_logger",
  "log",
  "program",
  "solana-cli-config",
  "solana-client",
  "solana-sdk",
+]
+
+[[package]]
+name = "common"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "borsh",
+ "borsh-derive",
+ "solana-program",
 ]
 
 [[package]]
@@ -1732,6 +1743,9 @@ dependencies = [
 name = "program"
 version = "0.1.0"
 dependencies = [
+ "borsh",
+ "borsh-derive",
+ "common",
  "solana-program",
 ]
 
