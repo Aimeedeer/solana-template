@@ -18,11 +18,10 @@ fn main() -> Result<()> {
     let program_keypair = get_program_keypair(&client)?;
     println!("program id: {:#?}", program_keypair.pubkey());
 
-    let args = Cli::parse();
-
     let new_keypair = Keypair::new();
     println!("new_keypair_pubkey: {:?}", new_keypair.pubkey());
 
+    let args = Cli::parse();
     match args.cmd {
         Command::CreateAccount => {
             // example: use Solana sdk to call system_instruction directly
