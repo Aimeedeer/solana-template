@@ -5,8 +5,7 @@ use solana_client::rpc_client::RpcClient;
 use solana_sdk::{
     commitment_config::CommitmentConfig,
     signature::{read_keypair_file, Keypair, Signer},
-    system_instruction,
-    system_program,
+    system_instruction, system_program,
     transaction::Transaction,
 };
 
@@ -23,7 +22,7 @@ fn main() -> Result<()> {
     match args.cmd {
         Command::CreateAccount => {
             let new_keypair = Keypair::new();
-            
+
             let instr = system_instruction::create_account(
                 &config.keypair.pubkey(),
                 &new_keypair.pubkey(),
@@ -31,7 +30,7 @@ fn main() -> Result<()> {
                 0,
                 &system_program::ID,
             );
-            
+
             let blockhash = client.get_latest_blockhash()?;
             let tx = Transaction::new_signed_with_payer(
                 &[instr],
@@ -44,7 +43,7 @@ fn main() -> Result<()> {
             println!("sig: {}", sig);
         }
     }
-    
+
     Ok(())
 }
 

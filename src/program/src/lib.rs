@@ -1,8 +1,8 @@
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint::ProgramResult,
-    pubkey::Pubkey,
     msg,
+    pubkey::Pubkey,
 };
 
 #[cfg(not(feature = "no-entrypoint"))]
@@ -28,8 +28,8 @@ fn process_instruction(
 
     msg!("program_id: {:?}", program_id.key);
     msg!("system_program: {:?}", system_program.key);
-    
+
     processor::exec(program_id.key, accounts, instruction_data)?;
-    
+
     Ok(())
 }
