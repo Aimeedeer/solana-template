@@ -21,6 +21,8 @@ fn main() -> Result<()> {
     let new_keypair = Keypair::new();
     println!("new_keypair_pubkey: {:?}", new_keypair.pubkey());
 
+    env_logger::init();
+
     let args = Cli::parse();
     match args.cmd {
         Command::CreateAccount => {
@@ -41,7 +43,7 @@ fn main() -> Result<()> {
                 blockhash,
             );
 
-            let sig = client.send_and_confirm_transaction_with_spinner(&tx)?;
+            let sig = client.send_and_confirm_transaction(&tx)?;
             println!("sig: {}", sig);
         }
         Command::Transfer => {
@@ -61,7 +63,7 @@ fn main() -> Result<()> {
                 blockhash,
             );
 
-            let sig = client.send_and_confirm_transaction_with_spinner(&tx)?;
+            let sig = client.send_and_confirm_transaction(&tx)?;
             println!("sig: {}", sig);
         }
     };
@@ -96,6 +98,7 @@ fn load_config() -> Result<Config> {
     let cli_config = solana_cli_config::Config::load(config_file)?;
     let json_rpc_url = cli_config.json_rpc_url;
     let keypair = read_keypair_file(&cli_config.keypair_path).map_err(|e| anyhow!("{}", e))?;
+
     Ok(Config {
         json_rpc_url,
         keypair,
