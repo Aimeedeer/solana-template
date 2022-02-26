@@ -6,6 +6,11 @@ use solana_program::{
     system_program,
 };
 
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub enum ProgramInstruction {
+    Transfer(TransferInstruction),
+}
+
 /// # Accounts
 ///
 /// - 0: payer - writable, signer
@@ -18,12 +23,13 @@ pub struct TransferInstruction {
 
 impl TransferInstruction {
     pub fn build_instruction(
+        program_id: &Pubkey,
         payer: &Pubkey,
         recipient: &Pubkey,
         amount: u64,
-        program_id: &Pubkey,
     ) -> Result<Instruction> {
         let instr = TransferInstruction { amount };
+        let instr = ProgramInstruction::Transfer(instr);
 
         let accounts = vec![
             AccountMeta::new(*payer, true),

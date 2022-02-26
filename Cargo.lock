@@ -404,7 +404,6 @@ dependencies = [
  "common",
  "env_logger",
  "log",
- "program",
  "solana-cli-config",
  "solana-client",
  "solana-sdk",
