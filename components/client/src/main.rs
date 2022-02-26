@@ -13,7 +13,6 @@ use solana_sdk::{
 fn main() -> Result<()> {
     let config = load_config()?;
     let client = connect(&config)?;
-    let version = client.get_version()?;
 
     let program_keypair = get_program_keypair(&client)?;
     println!("program id: {:#?}", program_keypair.pubkey());
@@ -47,10 +46,10 @@ fn main() -> Result<()> {
         Command::Transfer => {
             // example: use our onchain program
             let instr = TransferInstruction::build_instruction(
+                &program_keypair.pubkey(),
                 &config.keypair.pubkey(),
                 &new_keypair.pubkey(),
                 2_000_000,
-                &program_keypair.pubkey(),
             )?;
 
             let blockhash = client.get_latest_blockhash()?;
