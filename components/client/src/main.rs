@@ -26,7 +26,6 @@ fn main() -> Result<()> {
     let new_keypair = Keypair::new();
     println!("new_keypair_pubkey: {:?}", new_keypair.pubkey());
 
-    env_logger::init();
 
     let args = Cli::parse();
     match args.cmd {
