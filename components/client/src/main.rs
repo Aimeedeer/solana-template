@@ -20,7 +20,7 @@ fn main() -> Result<()> {
     let config = load_config()?;
     let client = connect(&config)?;
 
-    let program_keypair = get_program_keypair(&client)?;
+    let program_keypair = load_program_keypair(&client, PROGRAM_KEYPAIR_FILE)?;
     println!("program id: {:#?}", program_keypair.pubkey());
 
     let new_keypair = Keypair::new();
@@ -88,7 +88,7 @@ enum Command {
 }
 
 static DEPLOY_PATH: &str = "target/deploy";
-static PROGRAM_KEYPAIR_PATH: &str = "program-keypair.json";
+static PROGRAM_KEYPAIR_FILE: &str = "program-keypair.json";
 
 pub struct Config {
     json_rpc_url: String,
@@ -120,10 +120,10 @@ fn connect(config: &Config) -> Result<RpcClient> {
     Ok(client)
 }
 
-pub fn get_program_keypair(client: &RpcClient) -> Result<Keypair> {
+pub fn load_program_keypair(client: &RpcClient, program_keypair_file: &str) -> Result<Keypair> {
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
     let deploy_path = format!("{}/../../{}", manifest_dir, DEPLOY_PATH);
-    let program_keypair_path = format!("{}/{}", deploy_path, PROGRAM_KEYPAIR_PATH);
+    let program_keypair_path = format!("{}/{}", deploy_path, program_keypair_file);
 
     info!("loading program keypair from {}", program_keypair_path);
 
