@@ -30,11 +30,7 @@ trait Exec {
 }
 
 impl Exec for TransferInstruction {
-    fn exec(
-        &self,
-        _program_id: &Pubkey,
-        accounts: &[AccountInfo],
-    ) -> ProgramResult {
+    fn exec(&self, _program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
         let account_info_iter = &mut accounts.iter();
 
         let payer = next_account_info(account_info_iter)?;
