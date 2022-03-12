@@ -90,7 +90,7 @@ enum Command {
 static DEPLOY_PATH: &str = "target/deploy";
 static PROGRAM_KEYPAIR_FILE: &str = "program-keypair.json";
 
-pub struct Config {
+struct Config {
     json_rpc_url: String,
     keypair: Keypair,
 }
@@ -120,7 +120,7 @@ fn connect(config: &Config) -> Result<RpcClient> {
     Ok(client)
 }
 
-pub fn load_program_keypair(client: &RpcClient, program_keypair_file: &str) -> Result<Keypair> {
+fn load_program_keypair(client: &RpcClient, program_keypair_file: &str) -> Result<Keypair> {
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
     let deploy_path = format!("{}/../../{}", manifest_dir, DEPLOY_PATH);
     let program_keypair_path = format!("{}/{}", deploy_path, program_keypair_file);
