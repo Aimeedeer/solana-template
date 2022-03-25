@@ -63,7 +63,7 @@ fn main() -> Result<()> {
             let tx = Transaction::new_signed_with_payer(
                 &[instr],
                 Some(&payer.pubkey()),
-                &[&payer],
+                &[payer],
                 blockhash,
             );
 
