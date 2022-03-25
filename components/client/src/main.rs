@@ -19,6 +19,7 @@ fn main() -> Result<()> {
 
     let config = load_config()?;
     let client = connect(&config)?;
+    let payer = &config.keypair;
 
     let program_keypair = load_program_keypair(&client, PROGRAM_KEYPAIR_FILE)?;
     println!("program id: {:#?}", program_keypair.pubkey());
@@ -31,7 +32,7 @@ fn main() -> Result<()> {
         Command::CreateAccount => {
             // example: use Solana sdk to call system_instruction directly
             let instr = system_instruction::create_account(
-                &config.keypair.pubkey(),
+                &payer.pubkey(),
                 &new_keypair.pubkey(),
                 1_000_000,
                 0,
@@ -41,8 +42,8 @@ fn main() -> Result<()> {
             let blockhash = client.get_latest_blockhash()?;
             let tx = Transaction::new_signed_with_payer(
                 &[instr],
-                Some(&config.keypair.pubkey()),
-                &[&config.keypair, &new_keypair],
+                Some(&payer.pubkey()),
+                &[&payer, &new_keypair],
                 blockhash,
             );
 
@@ -53,7 +54,7 @@ fn main() -> Result<()> {
             // example: use our onchain program
             let instr = TransferInstruction::build_instruction(
                 &program_keypair.pubkey(),
-                &config.keypair.pubkey(),
+                &payer.pubkey(),
                 &new_keypair.pubkey(),
                 2_000_000,
             )?;
@@ -61,8 +62,8 @@ fn main() -> Result<()> {
             let blockhash = client.get_latest_blockhash()?;
             let tx = Transaction::new_signed_with_payer(
                 &[instr],
-                Some(&config.keypair.pubkey()),
-                &[&config.keypair],
+                Some(&payer.pubkey()),
+                &[&payer],
                 blockhash,
             );
 
