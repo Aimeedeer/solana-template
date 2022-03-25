@@ -1,7 +1,7 @@
 use anyhow::{anyhow, bail, Context, Result};
 use clap::{ArgEnum, Parser};
 use common::TransferInstruction;
-use log::info;
+use log::{info, error};
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::{
     commitment_config::CommitmentConfig,
@@ -137,12 +137,19 @@ fn load_program_keypair(client: &RpcClient, program_keypair_file: &str) -> Resul
 
     let account = client
         .get_account(&program_id)
-        .context("unable to get program account")?;
+        .context("unable to get program account");
 
-    info!("program account: {:?}", account);
+    match account {
+        Ok(account) => {
+            info!("program account: {:?}", account);
 
-    if !account.executable {
-        bail!("solana account not executable");
+            if !account.executable {
+                bail!("program account not executable");
+            }
+        }
+        Err(e) => {
+            error!("{}", e);
+        }
     }
 
     Ok(program_keypair)
