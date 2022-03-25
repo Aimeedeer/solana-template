@@ -1,7 +1,7 @@
 use anyhow::{anyhow, bail, Context, Result};
 use clap::{ArgEnum, Parser};
 use common::TransferInstruction;
-use log::{info, error};
+use log::{info, warn};
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::{
     commitment_config::CommitmentConfig,
@@ -148,7 +148,7 @@ fn load_program_keypair(client: &RpcClient, program_keypair_file: &str) -> Resul
             }
         }
         Err(e) => {
-            error!("{}", e);
+            warn!("{}", e);
         }
     }
 
