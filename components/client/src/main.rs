@@ -17,8 +17,6 @@ fn main() -> Result<()> {
         .parse_default_env()
         .init();
 
-    // todo print rpc url
-
     let config = load_config()?;
     let client = connect(&config)?;
     let payer = &config.keypair;
