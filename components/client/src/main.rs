@@ -13,7 +13,7 @@ use solana_sdk::{
 fn main() -> Result<()> {
     env_logger::Builder::new()
         .filter_level(log::LevelFilter::Info)
-        .filter_module("solana_client::rpc_client", log::LevelFilter::Debug)
+        .filter_module("solana_client", log::LevelFilter::Debug)
         .parse_default_env()
         .init();
 
