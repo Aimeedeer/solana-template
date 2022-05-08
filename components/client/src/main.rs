@@ -17,7 +17,8 @@ fn main() -> Result<()> {
         .parse_default_env()
         .init();
 
-    let config = load_config()?;
+    let args = Cli::parse();
+    let config = load_config(args.url)?;
     let client = connect(&config)?;
     let payer = &config.keypair;
 
@@ -27,7 +28,6 @@ fn main() -> Result<()> {
     let new_keypair = Keypair::new();
     println!("new_keypair_pubkey: {:?}", new_keypair.pubkey());
 
-    let args = Cli::parse();
     match args.cmd {
         Command::CreateAccount => {
             // example: use Solana sdk to call system_instruction directly
@@ -79,6 +79,8 @@ fn main() -> Result<()> {
 struct Cli {
     #[clap(subcommand)]
     cmd: Command,
+    #[clap(long, global = true)]
+    url: Option<String>,
 }
 
 #[derive(Subcommand, Debug, Clone)]
@@ -95,12 +97,14 @@ struct Config {
     keypair: Keypair,
 }
 
-fn load_config() -> Result<Config> {
+fn load_config(rpc_url: Option<String>) -> Result<Config> {
     let config_file = solana_cli_config::CONFIG_FILE
         .as_ref()
         .ok_or_else(|| anyhow!("config file path"))?;
     let cli_config = solana_cli_config::Config::load(config_file)?;
-    let json_rpc_url = cli_config.json_rpc_url;
+    let json_rpc_url = rpc_url.map(|url| {
+        solana_clap_utils::input_validators::normalize_to_url_if_moniker(url)
+    }).unwrap_or(cli_config.json_rpc_url);
     let keypair = read_keypair_file(&cli_config.keypair_path).map_err(|e| anyhow!("{}", e))?;
 
     Ok(Config {
