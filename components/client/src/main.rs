@@ -1,5 +1,5 @@
 use anyhow::{anyhow, bail, Context, Result};
-use clap::{Subcommand, Parser};
+use clap::{Parser, Subcommand};
 use common::TransferInstruction;
 use log::{info, warn};
 use solana_client::rpc_client::RpcClient;
@@ -102,9 +102,9 @@ fn load_config(rpc_url: Option<String>) -> Result<Config> {
         .as_ref()
         .ok_or_else(|| anyhow!("config file path"))?;
     let cli_config = solana_cli_config::Config::load(config_file)?;
-    let json_rpc_url = rpc_url.map(|url| {
-        solana_clap_utils::input_validators::normalize_to_url_if_moniker(url)
-    }).unwrap_or(cli_config.json_rpc_url);
+    let json_rpc_url = rpc_url
+        .map(|url| solana_clap_utils::input_validators::normalize_to_url_if_moniker(url))
+        .unwrap_or(cli_config.json_rpc_url);
     let keypair = read_keypair_file(&cli_config.keypair_path).map_err(|e| anyhow!("{}", e))?;
 
     Ok(Config {
