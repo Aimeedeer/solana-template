@@ -1,5 +1,5 @@
 use anyhow::{anyhow, bail, Context, Result};
-use clap::{ArgEnum, Parser};
+use clap::{Subcommand, Parser};
 use common::TransferInstruction;
 use log::{info, warn};
 use solana_client::rpc_client::RpcClient;
@@ -77,11 +77,11 @@ fn main() -> Result<()> {
 
 #[derive(Parser, Debug)]
 struct Cli {
-    #[clap(arg_enum)]
+    #[clap(subcommand)]
     cmd: Command,
 }
 
-#[derive(ArgEnum, Debug, Clone)]
+#[derive(Subcommand, Debug, Clone)]
 enum Command {
     CreateAccount,
     Transfer,
