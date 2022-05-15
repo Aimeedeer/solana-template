@@ -79,6 +79,7 @@ fn main() -> Result<()> {
 struct Cli {
     #[clap(subcommand)]
     cmd: Command,
+    /// URL for Solana's JSON RPC or moniker (or their first letter): [mainnet-beta, testnet, devnet, localhost]
     #[clap(long, global = true)]
     url: Option<String>,
 }
